@@ -3,6 +3,12 @@ Program ESP8266 on Blockly for kids
 
 demo project for rgb led strip
 
+project uses submodules, so run
+
+git submodules init
+
+git submodules update
+
 edit Board/init.lua with your settings (host and pinout)
 
 run npm install && npm start in BlocklyWeb
