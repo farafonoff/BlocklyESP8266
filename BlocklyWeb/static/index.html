@@ -52,6 +52,9 @@
                   <button onclick='save()'><i class="fa fa-download fa-2x" aria-hidden="true"></i></button>
                   <button onclick='showFileDialog()'><i class="fa fa-upload fa-2x" aria-hidden="true"></i></button>
                   <input type="file" id="loadFiles" name="files" accept='text/xml, .xml' onchange="load(event)" style='display: none'/>
+                  <button onclick='demoWorkspace.clear()'><i class="fa fa-eraser fa-2x" aria-hidden="true"></i></button>
+                  <button onclick='demoWorkspace.undo(false)'><i class="fa fa-undo fa-2x" aria-hidden="true"></i></button>
+                  <button onclick='demoWorkspace.undo(true)'><i class="fa fa-repeat fa-2x" aria-hidden="true"></i></button>
               </div>
           </td>
       </tr>
