@@ -36,6 +36,9 @@
     #blocklyArea {
       height: 99%;
     }
+    .devices {
+      width: 320px;
+    }
   </style>
 </head>
 <body>
@@ -44,7 +47,7 @@
           <td>
               <div>
                   <button onclick="run()"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></button>
-                  <select id='devices'></select>
+                  <select class='.devices' id='devices'></select>
                   <button onclick="updateDevices()"><i class="fa fa-refresh fa-2x" aria-hidden="true"></i></button>
                   <button onclick='save()'><i class="fa fa-download fa-2x" aria-hidden="true"></i></button>
                   <button onclick='showFileDialog()'><i class="fa fa-upload fa-2x" aria-hidden="true"></i></button>

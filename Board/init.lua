@@ -109,10 +109,6 @@ selected_config = nil
 
 function car_run()
     initGPIO();   
-    if (socket ~=nil) then
-        socket.on('disconnection',nil)
-        socket.close()
-    end
     socket = nil
     init_connection(host, 11337);
 end
@@ -133,6 +129,7 @@ function init_connection(host, port)
             buffer = buffer .. c
         end
         s,e = string.find(buffer, '==END==')
+        print('got new program')
         if (s~=nil) then
             ss = string.sub(buffer, 1, s-1)
             buffer = string.sub(buffer, e + 1)
@@ -146,7 +143,7 @@ function init_connection(host, port)
     socket:on('disconnection', function(err)
         print('reconnecting to hub')
         socket = nil
-        node.task.post(0, function() 
+        tmr.alarm(0,500,0,function() 
             init_connection(host, port)
         end)
     end)
