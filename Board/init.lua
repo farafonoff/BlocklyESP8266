@@ -122,6 +122,8 @@ function init_connection(host, port)
     print('connecting..')
     socket:on("connection", function (sock, c)
         print('connected to hub')
+        local mac = wifi.sta.getmac();
+        sock:send("mac="..mac.."\n")
     end)
     local buffer = nil
     socket:on("receive", function (sock, c)
