@@ -15,6 +15,8 @@ Flash tools are here https://nodemcu.readthedocs.io/en/master/en/flash/
 
 Get ESPlorer from https://esp8266.ru/esplorer/.
 
+Get NodeJS and NPM (latest versions should work).
+
 ### Installing
 
 Clone this repository, and download submodule.
