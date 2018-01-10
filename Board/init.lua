@@ -1,5 +1,4 @@
-dofile('config.lua')
-dofile('colors.lua') --in gitignore
+dofile('config.lua') --in gitignore
 
 if (udpsocket~=nil) then
     udpsocket:close()
@@ -13,13 +12,16 @@ function initPWM(id)
     end
 end
 
-function setPWM(id, duty) {
+function setPWM(id, duty) 
     if (pwm~=nil) then
         pwm.setduty(id, duty/255*1023)
     else
         gpio.write(id, duty>127 and gpio.HIGH or gpio.LOW)
     end
-}
+end
+
+--dofile('colors.lua')
+dofile('car.lua')
 
 function retry_run(wait)
         local mytimer = tmr.create()
@@ -84,9 +86,20 @@ wifi.setmode(wifi.STATION)
 selected_config = nil
 
 function car_run()
-    initGPIO();   
+    if (socket ~=nil) then
+        socket.on('disconnection',nil)
+        socket.close()
+    end
     socket = nil
+    init_connection(host, 11337);
+end
+
+function init_connection(host, port)
+    socket = net.createConnection(net.TCP, 0);
+    print('connecting..')
+    socket:on("connection", function (sock, c)
         print('connected to hub')
+        local mac = wifi.sta.getmac();
         sock:send("mac="..mac.."\n")
     end)
     local buffer = nil
