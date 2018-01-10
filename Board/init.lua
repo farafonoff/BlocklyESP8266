@@ -1,7 +1,6 @@
 dofile('config.lua')
-dofile('colors.lua')
---local host = '192.168.8.14';
-local host = 'farafonoff.tk';
+dofile('colors.lua') --in gitignore
+
 if (udpsocket~=nil) then
     udpsocket:close()
 end
@@ -13,6 +12,7 @@ function initPWM(id)
         pwm.setduty(id,0);
     end
 end
+
 function setPWM(id, duty) {
     if (pwm~=nil) then
         pwm.setduty(id, duty/255*1023)
@@ -71,7 +71,6 @@ end
 retry_run(1000);
 
 print('HEAP:',node.heap())
-ap_ssid,ap_pass = "esp8266","optanex14";
 
 if (file.open('wificonf') == true)then
    ssid = string.gsub(file.readline(), "\n", "");
@@ -82,22 +81,12 @@ end
 wifi.setmode(wifi.STATION)
 --wifi.sta.config {ssid=ssid,pwd=pass}
 --wifi.sta.autoconnect(1);
-known_fi = {}
-known_fi["netis_24"]="optanex14"
 selected_config = nil
 
 function car_run()
     initGPIO();   
     socket = nil
-    init_connection(host, 11337);
-end
-
-function init_connection(host, port)
-    socket = net.createConnection(net.TCP, 0);
-    print('connecting..')
-    socket:on("connection", function (sock, c)
         print('connected to hub')
-        local mac = wifi.sta.getmac();
         sock:send("mac="..mac.."\n")
     end)
     local buffer = nil

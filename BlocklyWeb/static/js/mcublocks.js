@@ -51,5 +51,5 @@ Blockly.Lua['sleep'] = function (block) {
 };
 
 function MCUPostProcessLua(code) {
-    return code.replace(/ do[ ]?\n/, ' do \ncoroutine.yield(0);\n');
+    return code.replace(/ do[ ]?\n/g, ' do \ncoroutine.yield(0);\n');
 }
