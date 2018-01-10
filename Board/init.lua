@@ -1,12 +1,11 @@
-rpin = 1
-bpin = 2
-gpin = 5
+dofile('config.lua')
+dofile('colors.lua')
 --local host = '192.168.8.14';
 local host = 'farafonoff.tk';
 if (udpsocket~=nil) then
     udpsocket:close()
 end
-function initPin(id)
+function initPWM(id)
     gpio.mode(id,gpio.OUTPUT);gpio.write(id,gpio.LOW);
     if (pwm~=nil) then
         pwm.setup(id,1000,1023);--PWM 1KHz, Duty 1023
@@ -14,33 +13,13 @@ function initPin(id)
         pwm.setduty(id,0);
     end
 end
-function setColor(rv,gv,bv)
+function setPWM(id, duty) {
     if (pwm~=nil) then
-        pwm.setduty(rpin, rv/255*1023)
-        pwm.setduty(gpin, gv/255*1023)
-        pwm.setduty(bpin, bv/255*1023)
+        pwm.setduty(id, duty/255*1023)
     else
-        gpio.write(rpin, rv>127 and gpio.HIGH or gpio.LOW)
-        gpio.write(gpin, gv>127 and gpio.HIGH or gpio.LOW)
-        gpio.write(bpin, bv>127 and gpio.HIGH or gpio.LOW)
+        gpio.write(id, duty>127 and gpio.HIGH or gpio.LOW)
     end
-end
-function initGPIO()
-    --1,2EN     D1 GPIO5
-    --3,4EN     D2 GPIO4
-    --1A  ~2A   D3 GPIO0
-    --3A  ~4A   D4 GPIO2
-    
-    gpio.mode(0,gpio.OUTPUT);--LED Light on
-    gpio.write(0,gpio.LOW);
-    
-    initPin(rpin)
-    initPin(gpin)
-    initPin(bpin)
-end
-
-initGPIO();
-
+}
 
 function retry_run(wait)
         local mytimer = tmr.create()
@@ -178,8 +157,3 @@ wifi.sta.getap(1, function(t)
         tmr.alarm(0,200,0,run_softap)
     end
 end)
-
---uart.setup(1, 9600, 8, uart.PARITY_NONE, uart.STOPBITS_1, 0)
---uart.write(1, "Hello world")
---print('IP:',wifi.sta.getip());
---print('MAC:',wifi.sta.getmac());
