@@ -96,7 +96,6 @@ end
 
 function init_connection(host, port)
     socket = net.createConnection(net.TCP, 0);
-    print('connecting..')
     socket:on("connection", function (sock, c)
         print('connected to hub')
         local mac = wifi.sta.getmac();
@@ -122,7 +121,6 @@ function init_connection(host, port)
         end
     end)
     socket:on('disconnection', function(err)
-        print('reconnecting to hub')
         socket = nil
         tmr.alarm(0,500,0,function() 
             init_connection(host, port)
