@@ -95,3 +95,7 @@ function driveMotors(rm, lm)
     controlMotor(3, rm);
     controlMotor(4, lm);    
 end
+
+function die() 
+    driveMotors(0, 0)
+end

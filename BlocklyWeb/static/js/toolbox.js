@@ -363,5 +363,15 @@ function getToolbox() {
     <block type="set_color"></block>
     <block type="sleep"></block>
 </category>
+<category name="Машинка">
+    <block type="stop"></block>
+    <block type="forward"></block>
+    <block type="backward"></block>
+    <block type="left"></block>
+    <block type="right"></block>
+    <block type="stuck"></block>
+    <block type="nostuck"></block>
+    <block type="walldistance"></block>
+</category>
 </xml>
 `};

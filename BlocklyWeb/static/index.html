@@ -13,6 +13,7 @@
   <!-- my scripts -->
   <script src="/js/toolbox.js"></script>
   <script src="/js/mcublocks.js"></script>
+  <script src="/js/carblocks.js"></script>
   <script src="/js/saveload.js"></script>
 
   <style>
@@ -47,6 +48,7 @@
           <td>
               <div>
                   <button onclick="run()"><i class="fa fa-play-circle fa-2x" aria-hidden="true"></i></button>
+                  <button onclick="die()"><i class="fa fa-stop-circle fa-2x" aria-hidden="true"></i></button>
                   <select class='.devices' id='devices'></select>
                   <button onclick="updateDevices()"><i class="fa fa-refresh fa-2x" aria-hidden="true"></i></button>
                   <button onclick='save()'><i class="fa fa-download fa-2x" aria-hidden="true"></i></button>
@@ -120,6 +122,17 @@
 
     function run() {
         let code = generate()
+        let device = document.querySelector('#devices').value;
+        fetch(`/api/exec/${device}`, {
+            method:'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({script: code})
+        })
+    }
+    function die() {
+        let code = 'die();'
         let device = document.querySelector('#devices').value;
         fetch(`/api/exec/${device}`, {
             method:'POST',

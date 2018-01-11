@@ -20,3 +20,7 @@ function setColor(rv,gv,bv)
         gpio.write(bpin, bv>127 and gpio.HIGH or gpio.LOW)
     end
 end
+
+function die() 
+    setColor(0,0,0)
+end

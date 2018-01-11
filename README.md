@@ -22,8 +22,8 @@ Get NodeJS and NPM (latest versions should work).
 Clone this repository, and download submodule.
 
 ```
-git submodules init
-git submodules update
+git submodule init
+git submodule update
 ```
 
 ## Configuration
@@ -44,6 +44,7 @@ rpin = 1
 bpin = 2
 gpin = 5
 ```
+edit Board/init.lua, uncomment dofile (colors or car)
 
 to alter server port settings, see BlocklyWeb/socket.js and main.js
 
