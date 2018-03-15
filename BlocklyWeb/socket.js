@@ -67,5 +67,16 @@ function exec(conn, script) {
 	})
 }
 
+function setColorAll(colorcode) {
+	console.log(colorcode);
+	getDevices().then(devs => {
+		devs.forEach(dev => {
+			exec(dev.id, `==IMMEDIATE==setColor(${colorcode})`);
+		});
+	});	
+}
+
 module.exports.exec = exec;
 module.exports.getDevices = getDevices;
+module.exports.setColorAll = setColorAll;
+
