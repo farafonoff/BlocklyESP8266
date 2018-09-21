@@ -50,6 +50,10 @@ function prepstr(s) {
 
 app.post('/api/alice', function(req, res) {
 	let { request,session,version } = req.body;
+	if (!request.command && !request.payload) {
+		res.send(JSON.stringify({ response: { text: 'Назови цвет, например Красный' } , session, version }));
+		return;
+	}
 	let query = request.command || request.payload.choice;
 	query = prepstr(query);
 	let matches = colors.filter((color) => color.сname.indexOf(query)>-1)
