@@ -5,7 +5,7 @@
   "main": "socket.js",
   "scripts": {
     "start": "nodemon ./main.js",
-    "fstart": "forever start ./main.js",
+    "fstart": "nice -n -20 forever start ./main.js",
     "fstop": "forever stop ./main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,6 +16,7 @@
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "forever": "^0.15.3",
+    "node-fetch": "^2.2.0",
     "nodemon": "^1.14.3"
   }
 }

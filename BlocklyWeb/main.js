@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors')
 var colors = require('./colours.json').map(c=>({...c, сname: prepstr(c.name)}));
+var fetch = require('node-fetch')
 var app = express();
 
 app.use(bodyParser.json())
@@ -90,8 +91,39 @@ app.post('/api/exec/socket/:id', function (req, res) {
         res.sendStatus(200);
     });
 });
-
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+let portnumber = 3000;
+app.listen(portnumber, function () {
+  console.log(`Example app listening on port ${portnumber}!`);
 });
 
+let testreq = {
+  "meta": {
+    "client_id": "Developer Console/7.16 (apple iphone; iphone 11.4.1)",
+    "locale": "ru-RU",
+    "timezone": "UTC"
+  },
+  "request": {
+    "command": "серобуромалиновый",
+    "original_utterance": "серобуромалиновый",
+    "type": "SimpleUtterance"
+  },
+  "session": {
+    "message_id": 2,
+    "new": false,
+    "session_id": "64a88bbc-e768e452-2ab083a6-70c5a",
+    "skill_id": "36db8b40-6530-493b-b981-87e9700b7399",
+    "user_id": "029A5FA69FFDCE62BEC76E0608FC443202B0BBB9B6E6ACA4AF946934F890CCB8"
+  },
+  "version": "1.0"
+}
+let aliceKeepAlive = setInterval(() => {
+	fetch(`http://localhost:${portnumber}/api/alice`, {
+		method: 'POST',
+		headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(testreq)
+	}).then(resp => resp.json())
+	.then(json => console.log(json.response.text))
+},10000);
