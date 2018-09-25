@@ -18,6 +18,13 @@ server = net.createServer(socket => {
 		sockets = sockets.filter(s => s!==socket);
 		console.log(sockText(socket), ' disconnected')
 	})
+	socket.on('error', (error) => {
+		console.log(error);
+		let found = sockets.findIndex(sock => sock.mac === socket.mac);
+		if (found !== -1) {
+			sockets.splice(found, 1)
+		}
+	})
 	linereader.on('line', line=>processInput(socket, line));
 	socket.pipe(linereader);
 });
@@ -27,20 +34,18 @@ server.on('listening', () => {
 server.listen(port, '0.0.0.0');
 
 function processInput(socket, line) {
-	let eq = line.indexOf('=');
-	let first = line.substr(0, eq);
-	let last = line.substr(eq+1);
-	switch(first) {
-		case 'mac': {
-			socket.mac = last;
-			console.log(last, ' connected')
-			let found = sockets.findIndex(sock => sock.mac === socket.mac);
-			if (found === -1) {
-				sockets.push(socket);
-			} else {
+	let json = JSON.parse(line);
+	if (json.mac) {
+		socket.mac = json.mac;
+		console.log(json.mac, ' connected')
+		let found = sockets.findIndex(sock => sock.mac === socket.mac);
+		if (found === -1) {
+			sockets.push(socket);
+		} else {
+			if (sockets[found].close) {
 				sockets[found].close();
-				sockets[found] = socket;
 			}
+			sockets[found] = socket;
 		}
 	}
 }
@@ -59,7 +64,7 @@ function getDevices() {
 function exec(conn, script) {
 	let connection = sockets.find(sock => sock.mac === conn)
 	return new Promise((resolve, reject) => {
-		let data = script+'==END==';
+		let data = script+'\n';
 		console.log(data);
 		connection.write(data, (err) => {
 			resolve();
@@ -67,11 +72,22 @@ function exec(conn, script) {
 	})
 }
 
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+
 function setColorAll(colorcode) {
 	console.log(colorcode);
+	var parts = hexToRgb(colorcode);
 	getDevices().then(devs => {
 		devs.forEach(dev => {
-			exec(dev.id, `==IMMEDIATE==setColor(${colorcode})`);
+			exec(dev.id, JSON.stringify({ command:'setColor', arguments: [ parts.r, parts.g, parts.b ] }));
 		});
 	});	
 }

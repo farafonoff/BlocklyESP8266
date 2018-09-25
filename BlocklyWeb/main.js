@@ -55,6 +55,10 @@ app.post('/api/alice', function(req, res) {
 		res.send(JSON.stringify({ response: { text: 'Назови цвет, например Красный' } , session, version }));
 		return;
 	}
+	if (request.fake) {
+		res.send(JSON.stringify({ response: { text: 'OK' } , session, version }));
+		return;
+	}
 	let query = request.command || request.payload.choice;
 	query = prepstr(query);
 	let matches = colors.filter((color) => color.сname.indexOf(query)>-1)
@@ -103,8 +107,9 @@ let testreq = {
     "timezone": "UTC"
   },
   "request": {
-    "command": "серобуромалиновый",
-    "original_utterance": "серобуромалиновый",
+	"fake": true,
+    "command": "синий",
+    "original_utterance": "синий",
     "type": "SimpleUtterance"
   },
   "session": {
