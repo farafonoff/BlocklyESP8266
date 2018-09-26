@@ -46,9 +46,11 @@ app.post('/api/exec/serial/:id', function (req, res) {
 });
 
 function prepstr(s) {
-	return s.toLowerCase().replace(/ё/g,'е');
+	return s.toLowerCase().replace(/ё/g,'е').replace(/цвет/g,'');
 }
-
+function multimatch(str, arr) {
+	return arr.map(needle => str.indexOf(needle)).filter(i => i!==-1).length;
+}
 app.post('/api/alice', function(req, res) {
 	let { request,session,version } = req.body;
 	if (!request.command && !request.payload) {
@@ -60,11 +62,15 @@ app.post('/api/alice', function(req, res) {
 		return;
 	}
 	let query = request.command || request.payload.choice;
+	console.log(`[${new Date()}] ${query}`);
 	query = prepstr(query);
-	let matches = colors.filter((color) => color.сname.indexOf(query)>-1)
+	let parts = query.split(' ');
+	let matches = colors.map((color) => ({ ...color, tokens: multimatch(color.сname, parts)}))
+	.filter(color => color.tokens > 0)
 	.map(match => ({...match, relevance: query.length/match.name.length}));
-	matches.sort((m1,m2) => m2.relevance - m1.relevance);
+	matches.sort((m1,m2) => m1.tokens===m2.tokens?(m2.relevance - m1.relevance):(m2.tokens - m1.tokens));
 	let match = matches[0];
+	//console.log(matches.slice(0,3))
 	let ans;
 	if (match) {
 	let mname = match.name;
