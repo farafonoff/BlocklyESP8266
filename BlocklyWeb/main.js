@@ -130,5 +130,6 @@ let aliceKeepAlive = setInterval(() => {
 		},
 		body: JSON.stringify(testreq)
 	}).then(resp => resp.json())
-	.then(json => console.log(json.response.text))
+	//.then(json => console.log(json.response.text))
 },10000);
+
