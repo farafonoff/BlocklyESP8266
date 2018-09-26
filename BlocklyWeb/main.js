@@ -61,6 +61,10 @@ app.post('/api/alice', function(req, res) {
 		res.send(JSON.stringify({ response: { text: 'OK' } , session, version }));
 		return;
 	}
+	if (request.command.indexOf('ping')!==-1 || request.command.indexOf('пинг')!== -1) {
+		res.send(JSON.stringify({ response: { text: 'Ку-ку!' } , session, version }));
+		return;
+	}
 	let query = request.command || request.payload.choice;
 	console.log(`[${new Date()}] ${query}`);
 	query = prepstr(query);
