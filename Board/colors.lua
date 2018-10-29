@@ -1,6 +1,6 @@
-rpin = 4
-gpin = 8
-bpin = 7
+rpin = 1
+gpin = 5
+bpin = 2
 function initRGBStrip()
     gpio.mode(0,gpio.OUTPUT);--LED Light on
     gpio.write(0,gpio.LOW);
