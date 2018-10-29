@@ -6,11 +6,15 @@ module.exports.linebyline = () => {
             this.stringbuffer = this.stringbuffer || "";
             this.stringbuffer += chunk.toString('ascii');
             let index = this.stringbuffer.indexOf('\n');
-            if (index != -1) {
+            while (index != -1) {
                 let out = this.stringbuffer.substr(0, index);
+		console.log('>>>', out);
                 this.emit('line', out);
                 this.stringbuffer = this.stringbuffer.substr(index + 1)
+		index = this.stringbuffer.indexOf('\n');
             }
+            callback();
+	    return true;
         }
     });
 }
