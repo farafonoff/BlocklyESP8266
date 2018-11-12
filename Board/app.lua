@@ -105,6 +105,7 @@ function car_run()
     end
     socket = nil
     init_connection(host, 11337);
+    listen_udp(1234)
 end
 callables = {
     save_program = function (table) 
@@ -122,6 +123,11 @@ callables = {
             die()
         end
     end,
+    driveMotors = function(table)
+        if (driveMotors~=nil) then
+            driveMotors(table["r"], table["l"])
+        end
+    end,
     setColor = function (table)
         -- stub
         if (setColor ~= nil) then
@@ -129,6 +135,12 @@ callables = {
         end
     end
 }
+
+function processJsonString(str)
+    table = sjson.decode(str)
+    command = table["command"]
+    callables[command](table)
+end
 
 function init_connection(host, port)
     socket = net.createConnection(net.TCP, 0);
@@ -149,11 +161,7 @@ function init_connection(host, port)
         if (s~=nil) then
             ss = string.sub(buffer, 1, s-1)
             buffer = string.sub(buffer, e + 1)
-            print(ss)
-            table = json.decode(ss)
-            print(dump(table))
-            command = table["command"]
-            callables[command](table)
+            processJsonString(ss)
         end
     end)
     socket:on('disconnection', function(err)
