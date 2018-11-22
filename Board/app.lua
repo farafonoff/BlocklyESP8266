@@ -18,7 +18,7 @@ function initPWM(id)
     gpio.mode(id,gpio.OUTPUT);
     gpio.write(id,gpio.LOW);
     if (pwm~=nil) then
-        pwm.setup(id,1000,1023);--PWM 1KHz, Duty 1023
+        pwm.setup(id,50, 0);--PWM 1KHz, Duty 1023
         pwm.start(id);
         pwm.setduty(id,0);
     end

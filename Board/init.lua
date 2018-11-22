@@ -1,4 +1,4 @@
-parts = { "app.lua", "colors.lua", "car.lua", "udp.lua" }
+parts = { "app.lua", "colors.lua", "car.lua", "udp.lua", "car2.lua" }
 for i,v in ipairs(parts) do 
     if file.exists(v) then
         print("compiling "..v)
