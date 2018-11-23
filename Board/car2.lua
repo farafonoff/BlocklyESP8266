@@ -1,4 +1,4 @@
-ang_offset=-20
+ang_offset=0
 function position(deg)
     local d1g = 0.00027
     pwm.setduty(6, 1024*(0.075+d1g*(ang_offset+deg)))

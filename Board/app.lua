@@ -128,6 +128,12 @@ callables = {
             driveMotors(table["r"], table["l"])
         end
     end,
+    legoCar = function(table)
+        if (position~=nil) then
+            position(table["steer"])
+            controlMotor(3,table["drive"])
+        end
+    end,
     setColor = function (table)
         -- stub
         if (setColor ~= nil) then
