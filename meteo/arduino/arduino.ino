@@ -85,7 +85,8 @@ void setup() {
   initDisplay();
   display.drawString(0,0, "BOOT\n");
   display.display();
-  wifi_set_sleep_type(LIGHT_SLEEP_T);
+  startWiFi();
+  //wifi_set_sleep_type(LIGHT_SLEEP_T);
 }
 
 void readMHZ19() {
@@ -127,7 +128,6 @@ void loop() {
   drawData1();
   if (wcount > 10 || wcount < 0) {
     Serial.println("Sending data...");
-    startWiFi();
     WiFiClient client;
     if (connectHub(client)) {
       sendData(client);
