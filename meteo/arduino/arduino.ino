@@ -1,3 +1,5 @@
+#include "SSD1306Wire.h"
+
 #include <SoftwareSerial.h>
 #include <ESP8266WiFi.h>
 extern "C" {
@@ -16,6 +18,8 @@ const uint16_t port = 11337;
 unsigned char wcount = 0;
 
 SoftwareSerial mySerial(14, 12);
+SSD1306Wire display(0x3c, D2, D1);
+//OLEDDisplayUi ui ( &display );
 
 void startWiFi() {
   Serial.println();
@@ -65,10 +69,24 @@ void sendData(WiFiClient& client) {
   client.println(msg);
 }
 
+void initDisplay() {
+  display.init();
+
+  display.flipScreenVertically();
+
+  display.setContrast(255);
+  display.clear();
+}
+
 void setup() {
   Serial.begin(115200);
   delay(50);
   Serial.println("=========BOOT=========");
+  initDisplay();
+  display.drawString(0,0, "BOOT\n");
+  display.display();
+  startWiFi();
+  //wifi_set_sleep_type(LIGHT_SLEEP_T);
 }
 
 void readMHZ19() {
@@ -92,15 +110,24 @@ void readMHZ19() {
   Serial.println(mhz19_temp);
 }
 
+void drawData1() {
+  char out[30] = "";
+  display.clear();
+  sprintf(out, "%d ppm %d C", ppm, (int)mhz19_temp);
+  Serial.println(out);
+  //initDisplay();
+  display.drawString(0,16, out);
+  display.display(); 
+}
+
 void loop() {
-  system_rtc_mem_read(64, &wcount, sizeof(wcount));
   Serial.print("counter...");
   Serial.println(wcount);
   mySerial.begin(9600);
   readMHZ19();
+  drawData1();
   if (wcount > 10 || wcount < 0) {
     Serial.println("Sending data...");
-    startWiFi();
     WiFiClient client;
     if (connectHub(client)) {
       sendData(client);
@@ -112,11 +139,5 @@ void loop() {
     wcount = 0;
   }
   ++wcount;
-  system_rtc_mem_write(64, &wcount, sizeof(wcount));
-  if (wcount > 10 || wcount < 0) {
-    ESP.deepSleep(1e6, WAKE_RF_DEFAULT);    
-  } else {
-    ESP.deepSleep(1e6, WAKE_RF_DISABLED);//10s    
-  }
+  delay(1000);
 }
-
