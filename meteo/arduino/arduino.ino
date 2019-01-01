@@ -123,10 +123,10 @@ void readMHZ19() {
   }
   mhz19_temp = mhz19_response[4] - 44;
   ppm = 256 * (int)mhz19_response[2] + mhz19_response[3];
-  Serial.print("ppm ");
+  /*Serial.print("ppm ");
   Serial.print(ppm);
   Serial.print("mhz_temp ");
-  Serial.println(mhz19_temp);
+  Serial.println(mhz19_temp);*/
 }
 TempAndHumidity lastValues;
 void readDHT() {
@@ -136,7 +136,7 @@ void readDHT() {
 void drawData1() {
   char out[30] = "";
   display.clear();
-  sprintf(out, "%d ppm %d C", ppm, (int)mhz19_temp);
+  sprintf(out, "%d ppm", ppm);
   Serial.println(out);
   //initDisplay();
   display.drawString(offsetX,offsetY + 0,ip);
@@ -144,6 +144,7 @@ void drawData1() {
   String s1 = String(lastValues.temperature,0)+"\x0f7 C ";
   s1 += String(lastValues.humidity,0)+"%";
   String ntpt = (NTP.getTimeDateString());
+  display.drawString(offsetX,offsetY + 16, out);
   display.drawString(offsetX,offsetY + 24, s1);
   display.drawString(offsetX,offsetY + 32, ntpt);
   display.display(); 
@@ -153,7 +154,7 @@ void loop() {
   Serial.print("counter...");
   Serial.println(wcount);
   mySerial.begin(9600);
-  //readMHZ19();
+  readMHZ19();
   readDHT();
   drawData1();
   if (wcount > 10 || wcount < 0) {
