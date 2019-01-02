@@ -27,7 +27,7 @@ int offsetX = 0;
 int offsetY = 0;
 
 //Constants
-#define DHTPIN D4     // what pin we're connected to
+#define DHTPIN D3     // what pin we're connected to
 #define DHTTYPE DHTesp::DHT22   // DHT 22  (AM2302)
 SoftwareSerial mySerial(14, 12);
 SSD1306Wire display(0x3c, D2, D1);
@@ -102,6 +102,11 @@ void setup() {
   display.drawString(0,0, "BOOT\n");
   display.display();
   startWiFi();
+  pinMode(DHTPIN, OUTPUT);
+  digitalWrite(DHTPIN, LOW);
+  delay(100);
+  digitalWrite(DHTPIN, HIGH);
+  delay(100);
   dht.setup(DHTPIN, DHTTYPE);
   //wifi_set_sleep_type(LIGHT_SLEEP_T);
   NTP.begin ("pool.ntp.org", timeZone, true, minutesTimeZone);
