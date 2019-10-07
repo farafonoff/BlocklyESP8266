@@ -8,7 +8,7 @@
 extern "C" {
 #include "user_interface.h"
 }
-
+int WIFI_RETRY = 3;
 const char* ssid     = "netis_24";
 const char* password = "optanex14";
 
@@ -19,8 +19,9 @@ unsigned int ppm = 0;
 float mhz19_temp = 0;
 const uint16_t port = 11337;
 unsigned char wcount = 0;
-int8_t timeZone = 4;
+int8_t timeZone = 3;
 int8_t minutesTimeZone = 0;
+bool wifi = false;
 
 //screen saving
 int offsetX = 0;
@@ -36,7 +37,7 @@ DHTesp dht;
 
 String ip = "NO CONN";
 
-void startWiFi() {
+bool startWiFi() {
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
@@ -48,16 +49,21 @@ void startWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  int rtry = 0;
+  while (WiFi.status() != WL_CONNECTED && rtry < WIFI_RETRY) {
     delay(500);
     Serial.print(".");
+    ++rtry;
   }
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-  ip = WiFi.localIP().toString();
+  bool result = WiFi.status() == WL_CONNECTED;
+  if (result) {
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+    ip = WiFi.localIP().toString();    
+  }
+  return result;
 }
 
 boolean connectHub(WiFiClient& client) {
@@ -101,7 +107,9 @@ void setup() {
   initDisplay();
   display.drawString(0,0, "BOOT\n");
   display.display();
-  startWiFi();
+  if (wifi) {
+    wifi = startWiFi();
+  }
   pinMode(DHTPIN, OUTPUT);
   digitalWrite(DHTPIN, LOW);
   delay(100);
@@ -109,8 +117,10 @@ void setup() {
   delay(100);
   dht.setup(DHTPIN, DHTTYPE);
   //wifi_set_sleep_type(LIGHT_SLEEP_T);
-  NTP.begin ("pool.ntp.org", timeZone, true, minutesTimeZone);
-  NTP.setInterval (63);
+  if (wifi) {
+    NTP.begin ("pool.ntp.org", timeZone, true, minutesTimeZone);
+    NTP.setInterval (63);
+  }
 }
 
 void readMHZ19() {
@@ -143,15 +153,15 @@ void drawData1() {
   display.clear();
   sprintf(out, "%d ppm", ppm);
   Serial.println(out);
-  //initDisplay();
-  display.drawString(offsetX,offsetY + 0,ip);
-  //display.drawString(0,16, out);
+  if (wifi) {
+    String ntpt = (NTP.getTimeDateString());
+    display.drawString(offsetX,offsetY + 0,ip);
+    display.drawString(offsetX,offsetY + 32, ntpt);
+  }
   String s1 = String(lastValues.temperature,0)+"\x0f7 C ";
   s1 += String(lastValues.humidity,0)+"%";
-  String ntpt = (NTP.getTimeDateString());
   display.drawString(offsetX,offsetY + 16, out);
   display.drawString(offsetX,offsetY + 24, s1);
-  display.drawString(offsetX,offsetY + 32, ntpt);
   display.display(); 
 }
 
@@ -162,7 +172,7 @@ void loop() {
   readMHZ19();
   readDHT();
   drawData1();
-  if (wcount > 10 || wcount < 0) {
+  if (wifi && (wcount > 10 || wcount < 0)) {
     Serial.println("Sending data...");
     WiFiClient client;
     if (connectHub(client)) {
