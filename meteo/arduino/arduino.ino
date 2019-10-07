@@ -151,23 +151,26 @@ void readDHT() {
 void drawData1() {
   char out[30] = "";
   display.clear();
-  sprintf(out, "%d ppm", ppm);
-  Serial.println(out);
+  int ltop = 0;
   if (wifi) {
     String ntpt = (NTP.getTimeDateString());
     display.drawString(offsetX,offsetY + 0,ip);
-    display.drawString(offsetX,offsetY + 32, ntpt);
+    ltop = 16;    
+    display.drawString(offsetX,offsetY + ltop + 16, ntpt);
   }
-  String s1 = String(lastValues.temperature,0)+"\x0f7 C ";
-  s1 += String(lastValues.humidity,0)+"%";
-  display.drawString(offsetX,offsetY + 16, out);
-  display.drawString(offsetX,offsetY + 24, s1);
+  sprintf(out, "%d ppm", ppm);
+  String temp = String(lastValues.temperature,0);
+  String hum = String(lastValues.humidity,0);
+  String s1 = temp+" C "+ hum + "%";
+  char json[100];
+  sprintf(json, "{ \"temp\": %s, \"hum\": %s, \"co2\": %d }", temp.c_str(), hum.c_str(), ppm);
+  Serial.println(json);
+  display.drawString(offsetX,offsetY + ltop, out);
+  display.drawString(offsetX,offsetY + ltop + 8, s1);
   display.display(); 
 }
 
 void loop() {
-  Serial.print("counter...");
-  Serial.println(wcount);
   mySerial.begin(9600);
   readMHZ19();
   readDHT();
@@ -183,9 +186,11 @@ void loop() {
     delay(50);
     Serial.println("end of loop");
     wcount = 0;
-    offsetX = random(10);
-    offsetY = random(8);
   }
   ++wcount;
+  if (wcount %10 == 0) {
+    offsetX = random(20);
+    offsetY = random(20);
+  }
   delay(1000);
 }
